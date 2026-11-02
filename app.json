@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-fun",
-    "slug": "expo-fun",
+    "name": "Where's My Car",
+    "slug": "wheres-my-car",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -37,6 +37,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {}
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

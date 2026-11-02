@@ -1,56 +1,91 @@
-# Welcome to your Expo app 👋
+# Where's My Car
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A one-screen phone app that remembers where you parked: one tap saves a GPS pin and an optional note, another
+opens walking directions back to it. Runs in Expo Go on iPhone and Android, keeps the spot on the phone, and has
+no account, server or analytics.
 
-## Get started
+![Saved](docs/screenshots/saved.png)
 
-1. Install dependencies
+## Why
 
-   ```bash
-   npm install
-   ```
+Apple Maps and Google Maps both have a parked-car feature, but it depends on CarPlay, Bluetooth or a setting you
+forgot to turn on, and it lives three taps deep. Dedicated parking apps want an account and show ads. This is the
+whole job in one screen: save, then walk back.
 
-2. Start the app
+## What it does
 
-   ```bash
-   npx expo start
-   ```
+- **One tap to save.** Asks for foreground location once, takes a high-accuracy fix, and stores latitude,
+  longitude, time and note in AsyncStorage under `parking-spot`. Nothing leaves the phone.
+- **A note for the hard part.** "Level 3, spot B42" for garages where GPS is the least useful thing you know.
+- **Walking directions back.** Apple Maps (`dirflg=w`) on iOS, Google Maps walking directions everywhere else.
+- **"Saved 47 min ago".** The time since parking refreshes every minute, handy for meters.
+- **Light and dark.** Follows the system colour scheme.
+- **Ships without an App Store build.** Runs in Expo Go; updates go out with EAS Update and apply on next open.
 
-In the output, you'll find options to open the app in a
+## Screenshots
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+| | |
+|---|---|
+| ![Empty](docs/screenshots/empty.png) | ![Saved](docs/screenshots/saved.png) |
+| Empty | Saved |
+| ![Empty, dark](docs/screenshots/empty-dark.png) | ![Saved, dark](docs/screenshots/saved-dark.png) |
+| Dark | Dark |
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+*Screenshots are the web build in headless Chrome via `Tools/screenshots.mjs`, with a made-up spot and note,
+nobody's actual location.*
 
-## Get a fresh project
+## Quick start
 
-When you're ready, run:
+Requirements: Node 20+, and Expo Go on a phone on the same Wi-Fi (or a browser).
 
 ```bash
-npm run reset-project
+git clone https://github.com/aaryann123/wheres-my-car && cd wheres-my-car
+npm install
+npm run dev        # expo start; scan the QR code with the iPhone Camera app or Expo Go on Android
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Press `w` in the Expo terminal to open it in a browser instead; the browser asks for location the same way.
 
-### Other setup steps
+## Requirements
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+| | |
+|---|---|
+| Expo SDK | 54, pinned: the App Store's Expo Go runs SDK 54 only |
+| React Native | 0.81, React 19.1, expo-router 6 |
+| Phone | Expo Go on iOS or Android, location permission |
+| Web | Any modern browser via react-native-web; directions open Google Maps |
+| Publishing | Optional: an Expo account for `eas update` (see docs/BUILDING.md) |
 
-## Learn more
+Install new packages with `npx expo install <pkg>`, not `npm install`, so versions stay on SDK 54.
 
-To learn more about developing your project with Expo, look at the following resources:
+## How it's organised
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+src/app/index.tsx        the whole app: save, show, navigate, clear
+src/app/_layout.tsx      a headerless Stack with light/dark navigation theme
+src/components/          ThemedText, ThemedView
+src/constants/theme.ts   colours, spacing, fonts
+app.json                 Expo config (SDK 54 runtime policy)
+app.config.js            adds your EAS owner / project id from env or expo.local.json
+Tools/screenshots.mjs    web export + headless Chrome screenshots
+```
 
-## Join the community
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) explains the choices; [docs/BUILDING.md](docs/BUILDING.md) covers
+running, publishing and screenshots.
 
-Join our community of developers creating universal apps.
+## Contributing
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Pull requests are welcome.
+
+- `npx tsc --noEmit` is the fast check; then open it in Expo Go or the browser.
+- Keep the SDK at 54 until Expo Go in the App Store moves on.
+- Screenshots use the seeded spot in `Tools/screenshots.mjs`, never a real location.
+- Good first projects: a photo of the spot, a meter timer with a notification, several saved spots.
+
+## Credits and licence
+
+Where's My Car is MIT licensed, see [LICENSE](LICENSE).
+
+- Started from [create-expo-app](https://github.com/expo/expo)'s default template (MIT, 650 Industries); the
+  themed components and app icons come from it.
+- Apple Maps and Google Maps are trademarks of their owners; the app only opens their public direction URLs.
